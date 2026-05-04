@@ -58,7 +58,7 @@ X_train_text, X_test_text, age_sex_train, age_sex_test, y_train, y_test = train_
 print("\nRVKDE，將 128 維壓縮至 1 維 PDF...")
 dim_pca = 128
 K2 = 10
-backend_choice = "cuml" # 或 "cuml"，請確認你的 GPU 環境
+backend_choice = "faiss" # 或 "cuml"，請確認你的 GPU 環境
 
 nn_model = RVKDE.build_nn_kernels(X_train_text, K2=K2+1, backend=backend_choice)
 sigmas, _ = RVKDE.rvkde_sigmas(X_train_text, beta=1.0, dim=dim_pca, backend=backend_choice)
