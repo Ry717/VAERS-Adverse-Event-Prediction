@@ -1,0 +1,40 @@
+﻿原始資料筆數：40058
+移除無效 article_vector 後的資料筆數：40058
+移除目標欄位缺失值後的資料筆數：40058
+開始進行超參數優化...
+
+最佳試驗編號: 218
+最佳 : 0.7454
+最佳參數:
+  alpha: 0.1
+  min_child_weight: 0.8
+  n_estimators: 1000
+  learning_rate: 0.05
+  scale_pos_weight: 0.1
+  sampler: undersampling
+
+最佳試驗的詳細指標:
+  precision_pos: 0.7802
+  recall_pos: 0.7137
+  f1_pos: 0.7454
+  precision_neg: 0.9187
+  recall_neg: 0.9414
+  f1_neg: 0.9299
+  tn_avg: 5841.6000
+  tp_avg: 1289.4000
+  auc: 0.9093
+  aucpr: 0.8196
+  logloss: 0.2950
+
+前5筆試驗結果:
+   trial_number     value  alpha  min_child_weight  n_estimators  ...  tn_avg  tp_avg       auc     aucpr   logloss
+0             0  0.565442    3.3              1.35           275  ...  3845.0  1642.2  0.899263  0.794882  0.581416
+1             1  0.710976    0.9              2.60           275  ...  5635.8  1310.4  0.898884  0.792599  0.331070
+2             2  0.645360    0.4              0.90           350  ...  4858.2  1502.2  0.903926  0.815221  0.545579
+3             3  0.555290    0.8              2.20           200  ...  3748.6  1638.4  0.889332  0.771171  0.581840
+4             4  0.631878    2.8              1.50           300  ...  4692.6  1532.8  0.904465  0.813720  0.501283
+
+[5 rows x 19 columns]
+
+總共 300 個 trial 記錄被匯出。
+所有 trial 已儲存至 f1_pos_300.csv
