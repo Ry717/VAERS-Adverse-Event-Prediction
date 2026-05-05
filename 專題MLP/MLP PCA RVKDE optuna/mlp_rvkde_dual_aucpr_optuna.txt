@@ -1,0 +1,19 @@
+﻿原始資料筆數：40058
+移除目標欄位缺失值後的資料筆數：40058
+
+PCA 降維
+成功降至 128 維！(保留了原始文字向量 89.15% 的資訊量)
+
+進行 RVKDE + MLP 超參數優化...
+
+最佳試驗編號: 31
+最佳 AUCPR : 0.3753
+最佳架構與參數:
+  n_layers: 1
+  n_units_layer_0: 59
+  alpha: 1.0075961735315615e-05
+  learning_rate_init: 0.0018297451197781666
+  activation: relu
+  sampler: undersampling
+
+所有 trial 已成功儲存至 mlp_rvkde_aucpr_optuna.csv
