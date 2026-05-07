@@ -85,7 +85,7 @@ print("\n套用 Optuna 算出的最佳參數進行訓練...")
 sampler = RandomUnderSampler(sampling_strategy=1.0, random_state=42)
 X_train_res, Y_train_res = sampler.fit_resample(X_tr_final, Y_tr)
 
-# 讀取 Optuna 紀錄檔 (請確認這裡的檔名與你剛剛輸出的相符)
+# 讀取 Optuna 紀錄檔
 trials_df = pd.read_csv('mlp_rvkde_dual_aucpr_optuna.csv')
 best_trial = trials_df.sort_values(by='value', ascending=False).iloc[0]
 

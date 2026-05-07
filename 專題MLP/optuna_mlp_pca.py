@@ -64,7 +64,7 @@ print("\nPCA 降維")
 pca = PCA(n_components=128, random_state=42)
 X_vector_reduced = pca.fit_transform(X_vector)
 explained_variance = sum(pca.explained_variance_ratio_)
-print(f"成功降至 128 維！(保留了原始文字向量 {explained_variance*100:.2f}% 的資訊量)\n")
+print(f"降至 128 維！(保留了原始文字向量 {explained_variance*100:.2f}% 的資訊量)\n")
 
 # 特徵預處理：年齡標準化 + 性別 One-Hot
 X_age_sex = merged_df[['AGE_YRS', 'SEX']]
@@ -118,7 +118,7 @@ def objective(trial):
             solver='adam',
             max_iter=300,
             random_state=42,
-            early_stopping=True # 啟動內部早停機制，加速實驗
+            early_stopping=True # 內部早停機制
         )
         clf.fit(X_res, Y_res)
 
@@ -157,7 +157,7 @@ def objective(trial):
 
 print("開始進行 MLP 超參數優化...")
 study = optuna.create_study(direction="maximize", study_name="MLP_PCA_Optuna")
-study.optimize(objective, n_trials=50) # MLP較花時間，建議先測 50 或 100 次
+study.optimize(objective, n_trials=50) # MLP較花時間，先測 50 次
 
 print(f"\n最佳試驗編號: {study.best_trial.number}")
 print(f"最佳 AUCPR : {study.best_value:.4f}")

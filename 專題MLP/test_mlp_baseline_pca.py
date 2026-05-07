@@ -40,7 +40,7 @@ X_age_sex = X_age_sex.loc[merged_df.index]
 preprocessor = ColumnTransformer(
     transformers=[
         ('age', StandardScaler(), ['AGE_YRS']),
-        ('sex', OneHotEncoder(drop='first', sparse_output=False), ['SEX']),
+        ('sex', OneHotEncoder(drop='first', sparse_output=False), ['SEX']), #丟棄第一個類別以避免共線性
     ])
 X_age_sex_processed = preprocessor.fit_transform(X_age_sex)
 
@@ -48,7 +48,7 @@ print("PCA 降維...")
 pca = PCA(n_components=128, random_state=42)
 X_vector_reduced = pca.fit_transform(X_vector)
 explained_variance = sum(pca.explained_variance_ratio_)
-print(f"成功降至 128 維！(保留了原始文字向量 {explained_variance*100:.2f}% 的資訊量)")
+print(f"降至 128 維！(保留原始文字向量 {explained_variance*100:.2f}% 的資訊量)")
 
 X = np.hstack([X_vector_reduced, X_age_sex_processed])
 
@@ -62,7 +62,7 @@ X_train_resampled, y_train_resampled = rus.fit_resample(X_train, y_train)
 print("開始訓練 MLP 類神經網路模型...")
 mlp_model = MLPClassifier(
     hidden_layer_sizes=(128, 64), 
-    activation='relu',            
+    activation='tanh',            
     solver='adam',                
     max_iter=1000,                
     early_stopping=True,          

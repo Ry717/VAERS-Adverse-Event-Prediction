@@ -6,14 +6,28 @@ PCA 降維
 
 進行 RVKDE + MLP 超參數優化...
 
-最佳試驗編號: 31
+最佳試驗編號: 12
 最佳 AUCPR : 0.3753
 最佳架構與參數:
-  n_layers: 1
-  n_units_layer_0: 59
-  alpha: 1.0075961735315615e-05
-  learning_rate_init: 0.0018297451197781666
-  activation: relu
+  n_layers: 3
+  n_units_layer_0: 127
+  n_units_layer_1: 81
+  n_units_layer_2: 70
+  alpha: 0.0007713830165270921
+  learning_rate_init: 0.00046872501260461497
+  activation: tanh
   sampler: undersampling
 
-所有 trial 已成功儲存至 mlp_rvkde_aucpr_optuna.csv
+最佳試驗詳細指標:
+  正類 Precision (precision_pos): 0.3088
+  正類 Recall    (recall_pos)   : 0.6346
+  正類 F1-score  (f1_pos)       : 0.4100
+  負類 Precision (precision_neg): 0.8464
+  負類 Recall    (recall_neg)   : 0.5763
+  負類 F1-score  (f1_neg)       : 0.6795
+  ROC-AUC        (auc)          : 0.6543
+  平均真陽性     (TP_avg)       : 1146.4 人
+  平均真陰性     (TN_avg)       : 3575.8 人
+  Log Loss       (logloss)      : 0.6667
+
+所有 trial 已成功儲存至 mlp_rvkde_dual_aucpr_optuna.csv

@@ -78,7 +78,7 @@ sampler = RandomUnderSampler(sampling_strategy=1.0, random_state=42)
 X_train_res, Y_train_res = sampler.fit_resample(X_tr_final, Y_tr)
 
 # 讀取 Optuna 匯出的 CSV
-trials_df = pd.read_csv('mlp_rvkde_aucpr_optuna.csv') #此處自行更改
+trials_df = pd.read_csv('mlp_rvkde_single_aucpr_optuna.csv') #此處自行更改
 best_trial = trials_df.sort_values(by='value', ascending=False).iloc[0]
 
 # 動態組裝 hidden_layer_sizes
@@ -140,7 +140,7 @@ ax2.legend(loc="lower left", fontsize=12)
 ax2.grid(alpha=0.3)
 
 plt.tight_layout()
-output_filename = 'final_mlp_rvkde.png' 
+output_filename = 'final_mlp_rvkde_single.png' 
 plt.savefig(output_filename, dpi=300)
 
 print(f"\n圖表已成功儲存為：【{output_filename}】")

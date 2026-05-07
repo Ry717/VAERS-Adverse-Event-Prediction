@@ -40,7 +40,7 @@ X_age_sex = X_age_sex.loc[merged_df.index]
 preprocessor = ColumnTransformer(
     transformers=[
         ('age', StandardScaler(), ['AGE_YRS']),
-        ('sex', OneHotEncoder(drop='first', sparse_output=False), ['SEX']),
+        ('sex', OneHotEncoder(drop='first', sparse_output=False), ['SEX']), #丟棄第一個類別以避免共線性
     ])
 X_age_sex_processed = preprocessor.fit_transform(X_age_sex)
 
@@ -48,7 +48,7 @@ print("\nPCA 降維...")
 pca = PCA(n_components=128, random_state=42)
 X_vector_reduced = pca.fit_transform(X_vector)
 explained_variance = sum(pca.explained_variance_ratio_)
-print(f"成功將 768 維壓縮至 128 維 (保留資訊量: {explained_variance*100:.2f}%)")
+print(f"將 768 維壓縮至 128 維 (保留資訊量: {explained_variance*100:.2f}%)")
 
 print("\n切分資料集 (80% 訓練, 20% 測試)...")
 X_train_text, X_test_text, age_sex_train, age_sex_test, y_train, y_test = train_test_split(
@@ -79,7 +79,7 @@ print("\n組合最終特徵並進行欠採樣...")
 X_train_final = np.hstack([pdf_train, age_sex_train])
 X_test_final = np.hstack([pdf_test, age_sex_test])
 
-print(f"最終進入模型的特徵僅剩：{X_train_final.shape[1]} 維 (PDF + 年齡 + 性別)")
+print(f"最終進入模型的特徵剩：{X_train_final.shape[1]} 維 (PDF + 年齡 + 性別)")
 
 rus = RandomUnderSampler(sampling_strategy=1.0, random_state=42)
 X_train_resampled, y_train_resampled = rus.fit_resample(X_train_final, y_train)
@@ -87,7 +87,7 @@ X_train_resampled, y_train_resampled = rus.fit_resample(X_train_final, y_train)
 print("\n開始訓練 MLP 類神經網路...")
 mlp_model = MLPClassifier(
     hidden_layer_sizes=(64,), # 由於特徵已經極度濃縮，改用單層 64 顆神經元測試
-    activation='relu',            
+    activation='tanh',            
     solver='adam',                
     max_iter=1000,                
     early_stopping=True,          

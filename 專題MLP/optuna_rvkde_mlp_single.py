@@ -30,7 +30,7 @@ class Tee:
         self.file.flush()
         self.stdout.flush()
 
-output_file = open('mlp_rvkde_aucpr_optuna.txt', 'w', encoding='utf-8-sig')
+output_file = open('mlp_rvkde_single_aucpr_optuna.txt', 'w', encoding='utf-8-sig')
 sys.stdout = Tee(output_file)
 
 merged_df = pd.read_csv("merged_data_bert.csv")
@@ -114,7 +114,7 @@ def objective(trial):
             nn=nn_model, K2=K2, dim=dim_pca, same_dataset=False
         ).reshape(-1, 1)
 
-        # 組合最終的 4 維特徵 (PDF + 年齡 + 性別)
+        # 組合最終的 4 維特徵 (PDF(Probability Density Function) + 年齡 + 性別)
         X_tr_final = np.hstack([pdf_tr, X_meta_tr])
         X_va_final = np.hstack([pdf_va, X_meta_va])
         # -------------------------------------------------------------
@@ -181,6 +181,19 @@ print("最佳架構與參數:")
 for key, value in study.best_params.items():
     print(f"  {key}: {value}")
 
+print("\n最佳試驗詳細指標:")
+best_attrs = study.best_trial.user_attrs
+print(f"  正類 Precision (precision_pos): {best_attrs.get('precision_pos', 0):.4f}")
+print(f"  正類 Recall    (recall_pos)   : {best_attrs.get('recall_pos', 0):.4f}")
+print(f"  正類 F1-score  (f1_pos)       : {best_attrs.get('f1_pos', 0):.4f}")
+print(f"  負類 Precision (precision_neg): {best_attrs.get('precision_neg', 0):.4f}")
+print(f"  負類 Recall    (recall_neg)   : {best_attrs.get('recall_neg', 0):.4f}")
+print(f"  負類 F1-score  (f1_neg)       : {best_attrs.get('f1_neg', 0):.4f}")
+print(f"  ROC-AUC        (auc)          : {best_attrs.get('auc', 0):.4f}")
+print(f"  平均真陽性     (TP_avg)       : {best_attrs.get('tp_avg', 0):.1f} 人")
+print(f"  平均真陰性     (TN_avg)       : {best_attrs.get('tn_avg', 0):.1f} 人")
+print(f"  Log Loss       (logloss)      : {best_attrs.get('logloss', 0):.4f}")
+
 records = []
 for trial in study.trials:
     rec = {
@@ -192,8 +205,8 @@ for trial in study.trials:
     records.append(rec)
 
 df_all = pd.DataFrame(records)
-df_all.to_csv("mlp_rvkde_aucpr_optuna.csv", index=False, encoding="utf-8-sig")
-print("\n所有 trial 已成功儲存至 mlp_rvkde_aucpr_optuna.csv")
+df_all.to_csv("mlp_rvkde_single_aucpr_optuna.csv", index=False, encoding="utf-8-sig")
+print("\n所有 trial 已成功儲存至 mlp_rvkde_single_aucpr_optuna.csv")
 
 sys.stdout = sys.stdout.stdout
 output_file.close()

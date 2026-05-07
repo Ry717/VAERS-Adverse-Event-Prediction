@@ -30,7 +30,7 @@ class Tee:
         self.file.flush()
         self.stdout.flush()
 
-output_file = open('mlp_rvkde_aucpr_optuna.txt', 'w', encoding='utf-8-sig')
+output_file = open('mlp_rvkde_dual_aucpr_optuna.txt', 'w', encoding='utf-8-sig')
 sys.stdout = Tee(output_file)
 
 merged_df = pd.read_csv("merged_data_bert.csv")
@@ -185,6 +185,19 @@ print(f"最佳 AUCPR : {study.best_value:.4f}")
 print("最佳架構與參數:")
 for key, value in study.best_params.items():
     print(f"  {key}: {value}")
+
+print("\n最佳試驗詳細指標:")
+best_attrs = study.best_trial.user_attrs
+print(f"  正類 Precision (precision_pos): {best_attrs.get('precision_pos', 0):.4f}")
+print(f"  正類 Recall    (recall_pos)   : {best_attrs.get('recall_pos', 0):.4f}")
+print(f"  正類 F1-score  (f1_pos)       : {best_attrs.get('f1_pos', 0):.4f}")
+print(f"  負類 Precision (precision_neg): {best_attrs.get('precision_neg', 0):.4f}")
+print(f"  負類 Recall    (recall_neg)   : {best_attrs.get('recall_neg', 0):.4f}")
+print(f"  負類 F1-score  (f1_neg)       : {best_attrs.get('f1_neg', 0):.4f}")
+print(f"  ROC-AUC        (auc)          : {best_attrs.get('auc', 0):.4f}")
+print(f"  平均真陽性     (TP_avg)       : {best_attrs.get('tp_avg', 0):.1f} 人")
+print(f"  平均真陰性     (TN_avg)       : {best_attrs.get('tn_avg', 0):.1f} 人")
+print(f"  Log Loss       (logloss)      : {best_attrs.get('logloss', 0):.4f}")
 
 records = []
 for trial in study.trials:

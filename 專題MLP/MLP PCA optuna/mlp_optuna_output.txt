@@ -2,17 +2,17 @@
 移除目標欄位缺失值後的資料筆數：40058
 
 PCA 降維
-成功降至 128 維！(保留了原始文字向量 89.15% 的資訊量)
+降至 128 維！(保留了原始文字向量 89.15% 的資訊量)
 
 開始進行 MLP 超參數優化...
 
-最佳試驗編號: 20
-最佳 AUCPR : 0.7265
+最佳試驗編號: 24
+最佳 AUCPR : 0.7205
 最佳大腦架構與參數:
   n_layers: 1
-  n_units_layer_0: 128
-  alpha: 0.003099476201839671
-  learning_rate_init: 0.002780540189626912
+  n_units_layer_0: 93
+  alpha: 0.006292095851226041
+  learning_rate_init: 0.0023689240079762075
   activation: relu
   sampler: undersampling
 
