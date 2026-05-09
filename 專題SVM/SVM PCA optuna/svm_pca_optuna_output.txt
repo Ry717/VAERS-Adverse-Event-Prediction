@@ -1,0 +1,31 @@
+﻿讀取資料中...
+原始資料筆數 : 40058
+移除目標欄位缺失值後的資料筆數 : 40058
+
+PCA 降維...
+降至 128 維！(保留了原始文字向量 89.15% 的資訊量)
+
+進行 SVM + PCA 超參數優化...
+
+
+最佳試驗編號: 31
+最佳 AUCPR : 0.7380
+最佳架構與參數:
+    kernel: rbf
+    C: 7.9348991094722825
+    gamma: scale
+    class_weight: None
+
+最佳試驗詳細指標:
+    正類 Precision (precision_pos): 0.5571
+    正類 Recall    (recall_pos)   : 0.7969
+    正類 F1-score  (f1_pos)       : 0.6557
+    負類 Precision (precision_neg): 0.9324
+    負類 Recall    (recall_neg)   : 0.8155
+    負類 F1-score  (f1_neg)       : 0.8700
+    ROC-AUC        (auc)          : 0.8828
+    真陽性         (TP)           : 1440 人
+    真陰性         (TN)           : 5060 人
+    Log Loss       (logloss)      : 0.4301
+
+所有 trial 已成功儲存至 svm_pca_aucpr_optuna.csv

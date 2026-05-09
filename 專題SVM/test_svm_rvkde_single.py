@@ -9,8 +9,9 @@ from sklearn.preprocessing import OneHotEncoder
 from imblearn.under_sampling import RandomUnderSampler
 from sklearn.svm import SVC
 from sklearn.decomposition import PCA
+import RVKDE  
 
-print("讀取資料中...")
+print("\n讀取資料中...")
 merged_df = pd.read_csv("merged_data_bert.csv")
 
 def parse_vector(vec):
@@ -27,7 +28,6 @@ merged_df['SEX'] = merged_df['SEX'].fillna('U')
 
 X_vector = np.array(merged_df['article_vector'].tolist())
 X_vector = X_vector.reshape(X_vector.shape[0], -1)
-
 X_age_sex = merged_df[['AGE_YRS', 'SEX']]
 
 target_columns = ['DIED', 'L_THREAT', 'ER_VISIT', 'HOSPITAL', 'X_STAY', 'ER_ED_VISIT']
@@ -44,39 +44,67 @@ preprocessor = ColumnTransformer(
     ])
 X_age_sex_processed = preprocessor.fit_transform(X_age_sex)
 
-print("PCA 降維...")
+print("\nPCA 降維中...")
 pca = PCA(n_components=128, random_state=42)
 X_vector_reduced = pca.fit_transform(X_vector)
 explained_variance = sum(pca.explained_variance_ratio_)
-print(f"成功降至 128 維！(保留了原始文字向量 {explained_variance*100:.2f}% 的資訊量)")
-X = np.hstack([X_vector_reduced, X_age_sex_processed])
+print(f"壓縮至 128 維 (保留資訊量: {explained_variance*100:.2f}%)")
 
-print("進行資料切分與欠採樣...")
-# 80% 訓練、20% 測試
-X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.2, random_state=42, stratify=Y)
+print("\n切分資料集 (80% 訓練, 20% 測試)...")
+X_train_text, X_test_text, age_sex_train, age_sex_test, y_train, y_test = train_test_split(
+    X_vector_reduced, X_age_sex_processed, Y, test_size=0.2, random_state=42, stratify=Y
+)
+
+print("\nRVKDE(single)，將 128 維壓縮至 1 維 PDF...")
+dim_pca = 128
+K2 = 10
+backend_choice = "faiss" # 若 GPU 環境有裝 cuml 也可以改
+
+nn_model = RVKDE.build_nn_kernels(X_train_text, K2=K2+1, backend=backend_choice)
+sigmas, _ = RVKDE.rvkde_sigmas(X_train_text, beta=1.0, dim=dim_pca, backend=backend_choice)
+
+pdf_train = RVKDE.cross_group_density_pairwise(
+    X_query=X_train_text, X_kernels=X_train_text, sigmas_k=sigmas,
+    nn=nn_model, K2=K2, dim=dim_pca, same_dataset=True
+).reshape(-1, 1)
+
+pdf_test = RVKDE.cross_group_density_pairwise(
+    X_query=X_test_text, X_kernels=X_train_text, sigmas_k=sigmas,
+    nn=nn_model, K2=K2, dim=dim_pca, same_dataset=False
+).reshape(-1, 1)
+
+print("RVKDE 轉換完成！")
+
+print("\n組合特徵並進行欠採樣...")
+X_train_final = np.hstack([pdf_train, age_sex_train])
+X_test_final = np.hstack([pdf_test, age_sex_test])
+
+print(f"SVM 模型的特徵剩：{X_train_final.shape[1]} 維 (PDF + 年齡 + 性別)")
 
 rus = RandomUnderSampler(sampling_strategy=1.0, random_state=42)
-X_train_resampled, y_train_resampled = rus.fit_resample(X_train, y_train)
+X_train_resampled, y_train_resampled = rus.fit_resample(X_train_final, y_train)
 
-print("開始訓練 SVM 支持向量機模型...")
-
+print("\n開始訓練 SVM (RBF)...")
+# 因為特徵只剩 4 維，直接用最強的 RBF 核來捕捉非線性關係
 svm_model = SVC(
-    kernel='rbf',          # 徑向基函數
-    probability=True,      # 必須打開這個，它才會吐出「機率值」讓我們算 AUCPR
-    random_state=42        # 確保結果可重現
+    kernel='rbf',          
+    probability=True,      
+    random_state=42        
 )
 
 svm_model.fit(X_train_resampled, y_train_resampled) 
-print("SVM 訓練完成！")
+print("SVM 訓練完成！\n")
 
-y_pred_svm = svm_model.predict(X_test)
-y_pred_proba_svm = svm_model.predict_proba(X_test)[:, 1]
+y_pred_svm = svm_model.predict(X_test_final)
+y_pred_proba_svm = svm_model.predict_proba(X_test_final)[:, 1]
 
 auc_svm = roc_auc_score(y_test, y_pred_proba_svm)
 aucpr_svm = average_precision_score(y_test, y_pred_proba_svm)
 
-print("\nSVM 支持向量機：")
+print("="*60)
+print("RVKDE(single) + SVM 測試結果")
+print("="*60)
 print(f"ROC-AUC: {auc_svm:.4f}")
-print(f"AUCPR: {aucpr_svm:.4f}")
+print(f"AUCPR  : {aucpr_svm:.4f}")
 print("\n詳細分類報告：")
 print(classification_report(y_test, y_pred_svm))

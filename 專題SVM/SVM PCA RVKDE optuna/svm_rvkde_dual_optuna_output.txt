@@ -1,0 +1,38 @@
+﻿讀取資料中...
+原始資料筆數 : 40058
+移除目標欄位缺失值後的資料筆數 : 40058
+
+PCA 降維...
+降至 128 維！(保留了原始文字向量 89.15% 的資訊量)
+
+切分資料集 (80% 訓練, 20% 測試)...
+
+將 128 維壓縮至 1 維 PDF...
+正類核心數: 7226, 負類核心數: 24820
+組合最終特徵並進行欠採樣...
+SVM 模型的特徵剩：5 維 (PDF_Pos + PDF_Neg + 年齡 + 2*性別)
+
+進行 SVM + RVKDE(dual) 超參數優化...
+
+
+最佳試驗編號: 17
+最佳 AUCPR : 0.3844
+最佳架構與參數:
+    kernel: rbf
+    C: 93.7880165279233
+    gamma: 0.001
+    class_weight: balanced
+
+最佳試驗詳細指標:
+    正類 Precision (precision_pos): 0.3144
+    正類 Recall    (recall_pos)   : 0.6431
+    正類 F1-score  (f1_pos)       : 0.4223
+    負類 Precision (precision_neg): 0.8506
+    負類 Recall    (recall_neg)   : 0.5916
+    負類 F1-score  (f1_neg)       : 0.6978
+    ROC-AUC        (auc)          : 0.6686
+    真陽性         (TP)           : 1162 人
+    真陰性         (TN)           : 3671 人
+    Log Loss       (logloss)      : 0.6461
+
+所有 trial 已成功儲存至 svm_rvkde_dual_aucpr_optuna.csv
